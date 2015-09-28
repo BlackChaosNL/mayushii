@@ -161,45 +161,41 @@ public class irc {
 			this.setSocket(new Socket(this.getServer(), this.getPort()));
 			this.setBufferedWriter(new BufferedWriter(new OutputStreamWriter(this.getSocket().getOutputStream())));
 			this.setBufferedReader(new BufferedReader(new InputStreamReader(this.getSocket().getInputStream())));
-			this.useIrc(username, login, channel, this.getBufferedWriter(), this.getBufferedReader());
 		} catch (IOException e) {
-			System.err.println("IrcClient: Something went wrong here!?!");
+			System.err.println("CreateConnection: Something went wrong here!?!");
 		}
 	}
 
 	/**
 	 * Login+keep alive to the IRC service.
-	 * 
-	 * @param nick
-	 * @param login
-	 * @param channel
-	 * @param bufferedWriter
-	 * @param bufferedReader
-	 * @throws IOException
 	 */
-	private void useIrc(String nick, String login, String channel, BufferedWriter bufferedWriter,
-			BufferedReader bufferedReader) throws IOException {
-		int ping = 0;
-		int joined = 0;
-		String line = null;
-		bufferedWriter.write("USER " + login + " foo foo foo :" + login + "\r\n");
-		bufferedWriter.write("NICK " + nick + "\r\n");
-		bufferedWriter.flush();
-		while ((line = bufferedReader.readLine()) != null) {
-			if (line.matches("(.*)PING(.*)")) {
-				bufferedWriter.write("PONG " + line.substring(5) + "\r\n");
-				bufferedWriter.flush();
-				ping++;
-			} else {
-				if (joined == 0 && ping >= 2) {
-					String[] channels = channel.split(",", -1);
-					for (int i = 0; i < channels.length; i++) {
-						bufferedWriter.write("JOIN " + channels[i] + "\r\n");
+	public void BindToIrc() {
+		try {
+			int ping = 0;
+			int joined = 0;
+			String line = null;
+			this.getBufferedWriter().write("USER " + this.getLogin() + " foo foo foo :" + this.getLogin() + "\r\n");
+			this.getBufferedWriter().write("NICK " + this.getUsername() + "\r\n");
+			this.getBufferedWriter().flush();
+			while ((line = bufferedReader.readLine()) != null) {
+				System.out.println(line);
+				if (line.matches("(.*)PING(.*)")) {
+					this.getBufferedWriter().write("PONG " + line.substring(5) + "\r\n");
+					this.getBufferedWriter().flush();
+					ping++;
+				} else {
+					if (joined == 0 && ping >= 2) {
+						String[] channels = channel.split(",", -1);
+						for (int i = 0; i < channels.length; i++) {
+							this.getBufferedWriter().write("JOIN " + channels[i] + "\r\n");
+						}
+						this.getBufferedWriter().flush();
+						joined = 1;
 					}
-					bufferedWriter.flush();
-					joined = 1;
 				}
 			}
+		} catch (IOException e) {
+			System.err.println("BindToIrc: Something went wrong here!?!");
 		}
 	}
 }
