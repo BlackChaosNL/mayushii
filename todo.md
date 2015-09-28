@@ -14,10 +14,10 @@ Default-access
 +  Encrypted Password Protection - Users (R)
 
 Commands
-+Default Command (For extension purposes)
-+List
++ Default Command (For extension purposes)
++ List
   +  Sub-list (Parent-Child Relationship)
-+RemindMe (?)
++ RemindMe (?)
   +  Callback on date/time
   +  Private MSG
-+Tamagochi (?)
++ Tamagochi (?)
